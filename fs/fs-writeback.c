@@ -25,6 +25,7 @@
 #include <linux/blkdev.h>
 #include <linux/backing-dev.h>
 #include <linux/buffer_head.h>
+#include <linux/delay.h>
 #include "internal.h"
 
 #define inode_to_bdi(inode)	((inode)->i_mapping->backing_dev_info)
@@ -150,8 +151,12 @@ static void wb_clear_pending(struct bdi_writeback *wb, struct bdi_work *work)
 	}
 }
 
+#define MAX_WAKEUP_RETRIES		3
 static void bdi_queue_work(struct backing_dev_info *bdi, struct bdi_work *work)
 {
+	int success = 0;
+	int retries = 0;
+
 	work->seen = bdi->wb_mask;
 	BUG_ON(!work->seen);
 	atomic_set(&work->pending, bdi->wb_cnt);
@@ -175,8 +180,33 @@ static void bdi_queue_work(struct backing_dev_info *bdi, struct bdi_work *work)
 	else {
 		struct bdi_writeback *wb = &bdi->wb;
 
+#if 0
 		if (wb->task)
 			wake_up_process(wb->task);
+#else
+		if (wb->task) {
+			success = wake_up_process(wb->task);
+			while (!success && ++retries <= MAX_WAKEUP_RETRIES) {
+				mdelay(10);
+				if (!wb->task) {
+					pr_err("(%s) %s: wake up %s FAIL, retries %d, wb_task %p\n",
+						current->comm, __func__, wb->task->comm,
+						retries, wb->task);
+					break;
+				}
+				success = wake_up_process(wb->task);
+				/*
+				pr_info("(%s) %s: wake_up %s %s, retries %d\n",
+					current->comm, __func__, wb->task->comm,
+					success ? "success" : "fail", retries);
+				*/
+			}
+			if (!success && retries > MAX_WAKEUP_RETRIES)
+				pr_err("(%s) %s: wake up %s FAIL, retries %d\n",
+					current->comm, __func__, wb->task->comm,
+					retries);
+		}
+#endif
 	}
 }
 
@@ -859,6 +889,12 @@ static long wb_check_old_data_flush(struct bdi_writeback *wb)
 	unsigned long expired;
 	long nr_pages;
 
+	/*
+	 * When set to zero, disable periodic writeback
+	 */
+	if (!dirty_writeback_interval)
+		return 0;
+
 	expired = wb->last_old_flush +
 			msecs_to_jiffies(dirty_writeback_interval * 10);
 	if (time_before(jiffies, expired))
@@ -932,6 +968,7 @@ long wb_do_writeback(struct bdi_writeback *wb, int force_wait)
  */
 int bdi_writeback_task(struct bdi_writeback *wb)
 {
+	struct backing_dev_info *bdi = wb->bdi;
 	unsigned long last_active = jiffies;
 	unsigned long wait_jiffies = -1UL;
 	long pages_written;
@@ -954,8 +991,18 @@ int bdi_writeback_task(struct bdi_writeback *wb)
 				break;
 		}
 
-		wait_jiffies = msecs_to_jiffies(dirty_writeback_interval * 10);
-		schedule_timeout_interruptible(wait_jiffies);
+                set_current_state(TASK_INTERRUPTIBLE);
+                if (!list_empty(&bdi->work_list) || kthread_should_stop()) {
+                        __set_current_state(TASK_RUNNING);
+                        continue;
+                }
+
+		if (dirty_writeback_interval) {
+			wait_jiffies = msecs_to_jiffies(dirty_writeback_interval * 10);
+			schedule_timeout(wait_jiffies);
+		} else
+			schedule();
+
 		try_to_freeze();
 	}
 
@@ -1211,6 +1258,23 @@ void writeback_inodes_sb(struct super_block *sb)
 	bdi_start_writeback(sb->s_bdi, sb, nr_to_write);
 }
 EXPORT_SYMBOL(writeback_inodes_sb);
+
+/**
+ * writeback_inodes_sb_if_idle	-	start writeback if none underway
+ * @sb: the superblock
+ *
+ * Invoke writeback_inodes_sb if no writeback is currently underway.
+ * Returns 1 if writeback was started, 0 if not.
+ */
+int writeback_inodes_sb_if_idle(struct super_block *sb)
+{
+	if (!writeback_in_progress(sb->s_bdi)) {
+		writeback_inodes_sb(sb);
+		return 1;
+	} else
+		return 0;
+}
+EXPORT_SYMBOL(writeback_inodes_sb_if_idle);
 
 /**
  * sync_inodes_sb	-	sync sb inode pages
