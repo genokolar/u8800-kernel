@@ -114,7 +114,7 @@ static struct arm_vm_region consistent_head = {
 };
 
 static struct arm_vm_region *
-arm_vm_region_alloc(struct arm_vm_region *head, size_t size, gfp_t gfp)
+arm_vm_region_alloc(struct arm_vm_region *head, size_t align, size_t size, gfp_t gfp)
 {
 	unsigned long addr = head->vm_start, end = head->vm_end - size;
 	unsigned long flags;
@@ -131,7 +131,7 @@ arm_vm_region_alloc(struct arm_vm_region *head, size_t size, gfp_t gfp)
 			goto nospc;
 		if ((addr + size) <= c->vm_start)
 			goto found;
-		addr = c->vm_end;
+		addr = ALIGN(c->vm_end, align);
 		if (addr > end)
 			goto nospc;
 	}
@@ -178,6 +178,8 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
 {
 	struct page *page;
 	struct arm_vm_region *c;
+	size_t align;
+	int bit;
 	unsigned long order;
 	u64 mask = get_coherent_dma_mask(dev);
 	u64 limit;
@@ -222,11 +224,16 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
 		dmac_flush_range(ptr, ptr + size);
 		outer_flush_range(__pa(ptr), __pa(ptr) + size);
 	}
+	
+	bit = fls(size - 1) + 1;
+	if (bit > SECTION_SHIFT)
+		bit = SECTION_SHIFT;
+	align = 1 << bit;
 
 	/*
 	 * Allocate a virtual address in the consistent mapping region.
 	 */
-	c = arm_vm_region_alloc(&consistent_head, size,
+	c = arm_vm_region_alloc(&consistent_head, align, size,
 			    gfp & ~(__GFP_DMA | __GFP_HIGHMEM));
 	if (c) {
 		pte_t *pte;
