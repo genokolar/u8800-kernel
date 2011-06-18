@@ -23,6 +23,7 @@
 #include <linux/flex_array.h>
 #include <linux/slab.h>
 #include <linux/stddef.h>
+#include <linux/reciprocal_div.h>
 
 struct flex_array_part {
 	char elements[FLEX_ARRAY_PART_SIZE];
@@ -87,8 +88,15 @@ struct flex_array *flex_array_alloc(int element_size, unsigned int total,
 					gfp_t flags)
 {
 	struct flex_array *ret;
-	int max_size = FLEX_ARRAY_NR_BASE_PTRS *
-				FLEX_ARRAY_ELEMENTS_PER_PART(element_size);
+	int elems_per_part = 0;
+	int reciprocal_elems = 0;
+	int max_size = 0;
+	
+	if (element_size) {
+	    elems_per_part = FLEX_ARRAY_ELEMENTS_PER_PART(element_size);
+	    reciprocal_elems = reciprocal_value(elems_per_part);
+	    max_size = FLEX_ARRAY_NR_BASE_PTRS * elems_per_part;
+	}
 
 	/* max_size will end up 0 if element_size > PAGE_SIZE */
 	if (total > max_size)
@@ -98,6 +106,9 @@ struct flex_array *flex_array_alloc(int element_size, unsigned int total,
 		return NULL;
 	ret->element_size = element_size;
 	ret->total_nr_elements = total;
+	ret->elems_per_part = elems_per_part;
+	ret->reciprocal_elems = reciprocal_elems;
+	
 	if (elements_fit_in_base(ret) && !(flags & __GFP_ZERO))
 		memset(ret->parts[0], FLEX_ARRAY_FREE,
 						FLEX_ARRAY_BASE_BYTES_LEFT);
@@ -107,7 +118,7 @@ struct flex_array *flex_array_alloc(int element_size, unsigned int total,
 static int fa_element_to_part_nr(struct flex_array *fa,
 					unsigned int element_nr)
 {
-	return element_nr / FLEX_ARRAY_ELEMENTS_PER_PART(fa->element_size);
+	return reciprocal_divide(element_nr, fa->reciprocal_elems);
 }
 
 /**
@@ -134,18 +145,20 @@ void flex_array_free(struct flex_array *fa)
 }
 
 static unsigned int index_inside_part(struct flex_array *fa,
-					unsigned int element_nr)
+					unsigned int element_nr,
+					unsigned int part_nr)
 {
 	unsigned int part_offset;
 
-	part_offset = element_nr %
-				FLEX_ARRAY_ELEMENTS_PER_PART(fa->element_size);
+	part_offset = element_nr - part_nr * fa->elems_per_part;
+	
 	return part_offset * fa->element_size;
 }
 
 static struct flex_array_part *
 __fa_get_part(struct flex_array *fa, int part_nr, gfp_t flags)
 {
+	
 	struct flex_array_part *part = fa->parts[part_nr];
 	if (!part) {
 		part = kmalloc(sizeof(struct flex_array_part), flags);
@@ -177,7 +190,7 @@ __fa_get_part(struct flex_array *fa, int part_nr, gfp_t flags)
 int flex_array_put(struct flex_array *fa, unsigned int element_nr, void *src,
 			gfp_t flags)
 {
-	int part_nr = fa_element_to_part_nr(fa, element_nr);
+	int part_nr = 0;
 	struct flex_array_part *part;
 	void *dst;
 
@@ -186,11 +199,12 @@ int flex_array_put(struct flex_array *fa, unsigned int element_nr, void *src,
 	if (elements_fit_in_base(fa))
 		part = (struct flex_array_part *)&fa->parts[0];
 	else {
+		part_nr = fa_element_to_part_nr(fa, element_nr);
 		part = __fa_get_part(fa, part_nr, flags);
 		if (!part)
 			return -ENOMEM;
 	}
-	dst = &part->elements[index_inside_part(fa, element_nr)];
+	dst = &part->elements[index_inside_part(fa, element_nr, part_nr)];
 	memcpy(dst, src, fa->element_size);
 	return 0;
 }
@@ -204,7 +218,7 @@ int flex_array_put(struct flex_array *fa, unsigned int element_nr, void *src,
  */
 int flex_array_clear(struct flex_array *fa, unsigned int element_nr)
 {
-	int part_nr = fa_element_to_part_nr(fa, element_nr);
+	int part_nr = 0;
 	struct flex_array_part *part;
 	void *dst;
 
@@ -213,11 +227,12 @@ int flex_array_clear(struct flex_array *fa, unsigned int element_nr)
 	if (elements_fit_in_base(fa))
 		part = (struct flex_array_part *)&fa->parts[0];
 	else {
+		part_nr = fa_element_to_part_nr(fa, element_nr);
 		part = fa->parts[part_nr];
 		if (!part)
 			return -EINVAL;
 	}
-	dst = &part->elements[index_inside_part(fa, element_nr)];
+	dst = &part->elements[index_inside_part(fa, element_nr, part_nr)];
 	memset(dst, FLEX_ARRAY_FREE, fa->element_size);
 	return 0;
 }
@@ -271,7 +286,7 @@ int flex_array_prealloc(struct flex_array *fa, unsigned int start,
  */
 void *flex_array_get(struct flex_array *fa, unsigned int element_nr)
 {
-	int part_nr = fa_element_to_part_nr(fa, element_nr);
+	int part_nr = 0;
 	struct flex_array_part *part;
 
 	if (element_nr >= fa->total_nr_elements)
@@ -279,11 +294,12 @@ void *flex_array_get(struct flex_array *fa, unsigned int element_nr)
 	if (elements_fit_in_base(fa))
 		part = (struct flex_array_part *)&fa->parts[0];
 	else {
+		part_nr = fa_element_to_part_nr(fa, element_nr);
 		part = fa->parts[part_nr];
 		if (!part)
 			return NULL;
 	}
-	return &part->elements[index_inside_part(fa, element_nr)];
+	return &part->elements[index_inside_part(fa, element_nr, part_nr)];
 }
 
 static int part_is_free(struct flex_array_part *part)
