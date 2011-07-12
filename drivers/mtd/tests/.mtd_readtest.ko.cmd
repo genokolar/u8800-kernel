@@ -1,1 +1,0 @@
-cmd_drivers/mtd/tests/mtd_readtest.ko := /usr/bin/arm-linux-gnueabi-ld -EL -r  -T /home/francisco/Desktop/noein-void-u8800-kernel-5ae345a/scripts/module-common.lds --build-id -o drivers/mtd/tests/mtd_readtest.ko drivers/mtd/tests/mtd_readtest.o drivers/mtd/tests/mtd_readtest.mod.o

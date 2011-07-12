@@ -1,1 +1,0 @@
-cmd_net/sched/cls_flow.ko := /usr/bin/arm-linux-gnueabi-ld -EL -r  -T /home/francisco/Desktop/noein-void-u8800-kernel-5ae345a/scripts/module-common.lds --build-id -o net/sched/cls_flow.ko net/sched/cls_flow.o net/sched/cls_flow.mod.o

@@ -1,1 +1,0 @@
-cmd_drivers/mtd/tests/mtd_erasepart.ko := /usr/bin/arm-linux-gnueabi-ld -EL -r  -T /home/francisco/Desktop/noein-void-u8800-kernel-5ae345a/scripts/module-common.lds --build-id -o drivers/mtd/tests/mtd_erasepart.ko drivers/mtd/tests/mtd_erasepart.o drivers/mtd/tests/mtd_erasepart.mod.o

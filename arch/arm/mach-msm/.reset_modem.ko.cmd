@@ -1,1 +1,0 @@
-cmd_arch/arm/mach-msm/reset_modem.ko := /usr/bin/arm-linux-gnueabi-ld -EL -r  -T /home/francisco/Desktop/noein-void-u8800-kernel-5ae345a/scripts/module-common.lds --build-id -o arch/arm/mach-msm/reset_modem.ko arch/arm/mach-msm/reset_modem.o arch/arm/mach-msm/reset_modem.mod.o

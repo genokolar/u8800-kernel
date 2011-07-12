@@ -1,1 +1,0 @@
-cmd_drivers/media/video/gspca/gspca_main.ko := /usr/bin/arm-linux-gnueabi-ld -EL -r  -T /home/francisco/Desktop/noein-void-u8800-kernel-5ae345a/scripts/module-common.lds --build-id -o drivers/media/video/gspca/gspca_main.ko drivers/media/video/gspca/gspca_main.o drivers/media/video/gspca/gspca_main.mod.o

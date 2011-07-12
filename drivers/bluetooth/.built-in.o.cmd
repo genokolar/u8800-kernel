@@ -1,1 +1,0 @@
-cmd_drivers/bluetooth/built-in.o :=  /usr/bin/arm-linux-gnueabi-ld -EL    -r -o drivers/bluetooth/built-in.o drivers/bluetooth/hci_uart.o drivers/bluetooth/bluetooth-power.o drivers/bluetooth/hwqtr_blueclock.o 
