@@ -84,7 +84,7 @@
 #define BATTERY_CB_ID_ALL_ACTIV       	1
 #define BATTERY_CB_ID_LOW_VOL		2
 
-#define BATTERY_LOW            	2800
+#define BATTERY_LOW            	3200
 #define BATTERY_HIGH           	4300
 
 #define ONCRPC_CHG_GET_GENERAL_STATUS_PROC 	12
@@ -98,6 +98,7 @@
 #define RPC_TYPE_REPLY   1
 #define RPC_REQ_REPLY_COMMON_HEADER_SIZE   (3 * sizeof(uint32_t))
 
+#undef DEBUG
 
 #if DEBUG
 #define DBG_LIMIT(x...) do {if (printk_ratelimit()) pr_debug(x); } while (0)
