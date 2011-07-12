@@ -1318,7 +1318,7 @@ msmsdcc_platform_sdiowakeup_irq(int irq, void *dev_id)
 	pr_info("%s: SDIO Wake up IRQ : %d\n", __func__, irq);
 	spin_lock(&host->lock);
 	if (!host->sdio_irq_disabled) {
-		wake_lock_timeout(&host->sdio_wlock,HZ*2);
+		wake_lock_timeout(&host->sdio_wlock,HZ*20);
 		disable_irq_nosync(irq);
 		disable_irq_wake(irq);
 		host->sdio_irq_disabled = 1;
@@ -1950,7 +1950,8 @@ msmsdcc_runtime_resume(struct device *dev)
 		mmc_resume_host(mmc);
 
 		if ((mmc->pm_flags & MMC_PM_WAKE_SDIO_IRQ) && release_lock)
-			wake_lock_timeout(&host->sdio_wlock, 1);
+			//wake_lock_timeout(&host->sdio_wlock, 1);
+			wake_unlock(&host->sdio_wlock);
 
 		 wake_unlock(&host->sdio_suspend_wlock);
 	}
