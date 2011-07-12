@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.32.9
- * Tue Jul 12 04:03:11 2011
+ * Tue Jul 12 04:45:31 2011
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -133,7 +133,6 @@
 #define CONFIG_RADIO_ADAPTERS 1
 #define CONFIG_ZBOOT_ROM_BSS 0x0
 #define CONFIG_SUSPEND 1
-#define CONFIG_SLAB 1
 #define CONFIG_INOTIFY 1
 #define CONFIG_HAVE_LATENCYTOP_SUPPORT 1
 #define CONFIG_USB_OTG_UTILS 1
@@ -189,6 +188,7 @@
 #define CONFIG_SCSI 1
 #define CONFIG_BT_BNEP_PROTO_FILTER 1
 #define CONFIG_TCP_CONG_CUBIC 1
+#define CONFIG_SLQB 1
 #define CONFIG_USB_OTG 1
 #define CONFIG_SPI_QSD 1
 #define CONFIG_HUAWEI_FEATURE_AT42QT_TS 1
