@@ -54,7 +54,12 @@ SECTIONS
   .bss			: { *(.bss) }
   _end = .;
 
+<<<<<<< HEAD
   .stack (NOLOAD)	: { *(.stack) }
+=======
+  . = ALIGN(8);		/* the stack must be 64-bit aligned */
+  .stack		: { *(.stack) }
+>>>>>>> 13e6023... ARM: zImage: make sure the stack is 64-bit aligned
 
   .stab 0		: { *(.stab) }
   .stabstr 0		: { *(.stabstr) }
