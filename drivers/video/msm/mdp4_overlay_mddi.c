@@ -171,6 +171,13 @@ void mdp4_overlay_update_lcd(struct msm_fb_data_type *mfd)
 		if (pipe == NULL)
 			printk(KERN_INFO "%s: pipe_alloc failed\n", __func__);
 		pipe->pipe_used++;
+		
+		ptype = mdp4_overlay_format2type(MDP_RGB_565);
+		pipe = mdp4_overlay_pipe_alloc(ptype, 0);
+
+		pipe->pipe_type = ptype;
+		pipe->mdp = mdp;
+
 		pipe->mixer_num  = MDP4_MIXER0;
 		pipe->src_format = mfd->fb_imgType;
 		ret = mdp4_overlay_format2pipe(pipe);
