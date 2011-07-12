@@ -33,6 +33,7 @@
 #ifndef __LINUX_RCUPDATE_H
 #define __LINUX_RCUPDATE_H
 
+#include <linux/rcu_types.h>
 #include <linux/cache.h>
 #include <linux/spinlock.h>
 #include <linux/threads.h>
@@ -41,6 +42,7 @@
 #include <linux/lockdep.h>
 #include <linux/completion.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_RCU_TORTURE_TEST
 extern int rcutorture_runnable; /* for sysctl */
 #endif /* #ifdef CONFIG_RCU_TORTURE_TEST */
@@ -58,6 +60,8 @@ struct rcu_head {
 	void (*func)(struct rcu_head *head);
 };
 
+=======
+>>>>>>> f5953d7... ADD: SLQB memory allocator
 /* Exported common interfaces */
 extern void call_rcu_sched(struct rcu_head *head,
 			   void (*func)(struct rcu_head *rcu));

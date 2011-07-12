@@ -1,0 +1,1 @@
+cmd_drivers/i2c/chips/built-in.o :=  /usr/bin/arm-linux-gnueabi-ld -EL    -r -o drivers/i2c/chips/built-in.o drivers/i2c/chips/tpa2028d1.o drivers/i2c/chips/st303_compass.o drivers/i2c/chips/st303_gs.o 
