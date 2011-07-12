@@ -329,40 +329,6 @@ static int mdp_lcdc_probe(struct platform_device *pdev)
 	lcdc->fb_start = pdata->fb_resource->start;
 	lcdc->mdp = container_of(mdp_dev, struct mdp_info, mdp_dev);
 
-	if(lcdc->mdp->mdp_dev.color_format)
-		lcdc->color_format = lcdc->mdp->mdp_dev.color_format;
-	else
-		lcdc->color_format = MSM_MDP_OUT_IF_FMT_RGB565;
-
-#ifdef CONFIG_MSM_MDP40
-	if (lcdc_pipe == NULL) {
-		ptype = mdp4_overlay_format2type(MDP_RGB_565);
-		pipe = mdp4_overlay_pipe_alloc(ptype, 0);
-		if (!pipe)
-			goto err_mdp4_overlay_pipe_alloc;
-		pipe->mixer_stage  = MDP4_MIXER_STAGE_BASE;
-		pipe->mixer_num  = MDP4_MIXER0;
-		pipe->src_format = MDP_RGB_565;
-		mdp4_overlay_format2pipe(pipe);
-		pipe->mdp = lcdc->mdp;
-
-		lcdc_pipe = pipe; /* keep it */
-	} else {
-		pipe = lcdc_pipe;
-	}
-
-	pipe->src_height = pdata->fb_data->yres;
-	pipe->src_width = pdata->fb_data->xres;
-	pipe->src_h = pdata->fb_data->yres;
-	pipe->src_w = pdata->fb_data->xres;
-	pipe->src_y = 0;
-	pipe->src_x = 0;
-	pipe->srcp0_addr = (uint32_t) lcdc->fb_start;
-	pipe->srcp0_ystride = pdata->fb_data->xres * 2;
-
-	mdp4_overlay_rgb_setup(pipe);
-	mdp4_mixer_stage_up(pipe);
-#endif
 	lcdc->fb_panel_data.suspend = lcdc_suspend;
 	lcdc->fb_panel_data.resume = lcdc_resume;
 	lcdc->fb_panel_data.wait_vsync = lcdc_wait_vsync;
