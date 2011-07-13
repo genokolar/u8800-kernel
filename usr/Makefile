@@ -15,6 +15,15 @@ suffix_$(CONFIG_INITRAMFS_COMPRESSION_BZIP2)  = .bz2
 # Lzma
 suffix_$(CONFIG_INITRAMFS_COMPRESSION_LZMA)   = .lzma
 
+<<<<<<< HEAD
+=======
+# XZ
+suffix_$(CONFIG_INITRAMFS_COMPRESSION_XZ)     = .xz
+
+# Lzo
+suffix_$(CONFIG_INITRAMFS_COMPRESSION_LZO)   = .lzo
+
+>>>>>>> ed03926... decompressors: add boot-time XZ support
 # Generate builtin.o based on initramfs_data.o
 obj-$(CONFIG_BLK_DEV_INITRD) := initramfs_data$(suffix_y).o
 
@@ -45,7 +54,11 @@ endif
 quiet_cmd_initfs = GEN     $@
       cmd_initfs = $(initramfs) -o $@ $(ramfs-args) $(ramfs-input)
 
+<<<<<<< HEAD
 targets := initramfs_data.cpio.gz initramfs_data.cpio.bz2 initramfs_data.cpio.lzma initramfs_data.cpio
+=======
+targets := initramfs_data.cpio.gz initramfs_data.cpio.bz2 initramfs_data.cpio.lzma initramfs_data.cpio.xz initramfs_data.cpio.lzo initramfs_data.cpio
+>>>>>>> ed03926... decompressors: add boot-time XZ support
 # do not try to update files included in initramfs
 $(deps_initramfs): ;
 
