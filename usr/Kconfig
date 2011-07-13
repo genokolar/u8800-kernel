@@ -72,8 +72,6 @@ config RD_LZMA
 	  Support loading of a LZMA encoded initial ramdisk or cpio buffer
 	  If unsure, say N.
 
-<<<<<<< HEAD
-=======
 config RD_XZ
 	bool "Support initial ramdisks compressed using XZ" if EMBEDDED
 	default !EMBEDDED
@@ -92,7 +90,7 @@ config RD_LZO
 	  Support loading of a LZO encoded initial ramdisk or cpio buffer
 	  If unsure, say N.
 
->>>>>>> ed03926... decompressors: add boot-time XZ support
+
 choice
 	prompt "Built-in initramfs compression mode" if INITRAMFS_SOURCE!=""
 	help
@@ -152,8 +150,6 @@ config INITRAMFS_COMPRESSION_LZMA
 	  two. Compression is slowest.	The initramfs size is about 33%
 	  smaller with LZMA in comparison to gzip.
 
-<<<<<<< HEAD
-=======
 config INITRAMFS_COMPRESSION_XZ
 	bool "XZ"
 	depends on RD_XZ
@@ -171,5 +167,4 @@ config INITRAMFS_COMPRESSION_LZO
 	  size is about about 10% bigger than gzip; however its speed
 	  (both compression and decompression) is the fastest.
 
->>>>>>> ed03926... decompressors: add boot-time XZ support
 endchoice
