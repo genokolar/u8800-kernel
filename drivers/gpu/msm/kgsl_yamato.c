@@ -1023,7 +1023,7 @@ static int kgsl_yamato_suspend(struct kgsl_device *device)
 	int status;
 
 	/* Wait for the device to become idle */
-	status = kgsl_yamato_idle(device, IDLE_COUNT_MAX);
+	status = kgsl_yamato_idle(device, MAX_WAITGPU_SECS);
 
 	if (status == KGSL_SUCCESS) {
 		/* Put the device to sleep. */
