@@ -77,14 +77,12 @@ config FLAT_NODE_MEM_MAP
 	def_bool y
 	depends on !SPARSEMEM
 
-<<<<<<< HEAD
 config CLEANCACHE
   	bool "Enable cleancache driver to cache clean pages if tmem is present"
   	default y
-=======
+
 config COMPACTION
 	def_bool y
->>>>>>> e3d8873... Implement memory compaction
 
 #
 # Both the NUMA code and DISCONTIGMEM use arrays of pg_data_t's
