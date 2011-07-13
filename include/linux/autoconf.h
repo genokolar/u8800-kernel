@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.32.9
- * Wed Jul 13 02:16:13 2011
+ * Wed Jul 13 02:33:36 2011
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -812,6 +812,7 @@
 #define CONFIG_SPI 1
 #define CONFIG_NLS 1
 #define CONFIG_FB_MSM_MDDI_NT35582_WVGA 1
+#define CONFIG_COMPACTION 1
 #define CONFIG_CRYPTO_ALGAPI 1
 #define CONFIG_PM_OPS 1
 #define CONFIG_MSM_RPC_PROC_COMM_TEST 1
