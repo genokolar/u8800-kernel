@@ -983,13 +983,11 @@ static void do_read_data(struct work_struct *work)
 
 	hdr.size -= sizeof(pm);
 
-	frag = rr_malloc(sizeof(*frag));
+	frag = rr_malloc(hdr.size + sizeof(*frag));
 	frag->next = NULL;
 	frag->length = hdr.size;
-	if (rr_read(frag->data, hdr.size)) {
-		kfree(frag);
+	if (rr_read(xprt_info, frag->data, hdr.size))
 		goto fail_io;
-	}
 
 #if defined(CONFIG_MSM_ONCRPCROUTER_DEBUG)
 	if ((smd_rpcrouter_debug_mask & RAW_PMR) &&
