@@ -123,16 +123,6 @@ choice
 	default KERNEL_GZIP
 	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ
 
-config HAVE_KERNEL_XZ
-	bool
-
-config HAVE_KERNEL_LZO
-	bool
-
-choice
-	prompt "Kernel compression mode"
-	default KERNEL_GZIP
-	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO
 	help
 	  The linux kernel is a kind of self-extracting executable.
 	  Several compression algorithms are available, which differ
