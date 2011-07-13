@@ -38,7 +38,8 @@
 
 /*
  * migrate_prep() needs to be called before we start compiling a list of pages
- * to be migrated using isolate_lru_page().
+ * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+ * undesirable, use migrate_prep_local()
  */
 int migrate_prep(void)
 {
@@ -50,6 +51,13 @@ int migrate_prep(void)
 	 */
 	lru_add_drain_all();
 
+	return 0;
+}
+
+/* Do the necessary work of migrate_prep but not if it involves other CPUs */
+int migrate_prep_local(void)
+{
+	lru_add_drain();
 	return 0;
 }
 
@@ -735,9 +743,11 @@ move_newpage:
  * returned to the LRU or freed.
  *
  * Return: Number of pages not migrated or error code.
+ *
+ * COMMENT BY ANDY: last param is used by compaction, but is anyway "0"
  */
 int migrate_pages(struct list_head *from,
-		new_page_t get_new_page, unsigned long private)
+		new_page_t get_new_page, unsigned long private, int unused)
 {
 	int retry = 1;
 	int nr_failed = 0;
