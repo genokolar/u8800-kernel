@@ -43,8 +43,8 @@
 #define BTN_F30 BTN_0
 #define SCROLL_ORIENTATION REL_Y
 
-#define TS_RMI_DEBUG
-//#undef TS_RMI_DEBUG
+//#define TS_RMI_DEBUG
+#undef TS_RMI_DEBUG
 #ifdef TS_RMI_DEBUG
 #define TS_DEBUG_RMI(fmt, args...) printk(KERN_INFO fmt, ##args)
 #else

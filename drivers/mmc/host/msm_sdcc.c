@@ -837,7 +837,7 @@ msmsdcc_irq(int irq, void *dev_id)
 #ifdef CONFIG_MMC_MSM_SDIO_SUPPORT
 		if (status & MCI_SDIOINTROPE) {
 			if (host->sdcc_suspending)
-				wake_lock_timeout(&host->sdio_suspend_wlock,HZ*2);
+				wake_lock_timeout(&host->sdio_suspend_wlock,HZ*10);
 			mmc_signal_sdio_irq(host->mmc);
 		}
 #endif
@@ -1318,7 +1318,7 @@ msmsdcc_platform_sdiowakeup_irq(int irq, void *dev_id)
 	pr_info("%s: SDIO Wake up IRQ : %d\n", __func__, irq);
 	spin_lock(&host->lock);
 	if (!host->sdio_irq_disabled) {
-		wake_lock_timeout(&host->sdio_wlock,HZ*20);
+		wake_lock_timeout(&host->sdio_wlock,HZ*10);
 		disable_irq_nosync(irq);
 		disable_irq_wake(irq);
 		host->sdio_irq_disabled = 1;
@@ -1649,14 +1649,14 @@ msmsdcc_probe(struct platform_device *pdev)
 				mmc_hostname(mmc));
 		ret = request_irq(plat->sdiowakeup_irq,
 			msmsdcc_platform_sdiowakeup_irq,
-			IRQF_SHARED | IRQF_TRIGGER_LOW,
+			IRQF_SHARED | IRQF_TRIGGER_FALLING,
 			DRIVER_NAME "sdiowakeup", host);
 		if (ret) {
 			pr_err("Unable to get sdio wakeup IRQ %d (%d)\n",
 				plat->sdiowakeup_irq, ret);
 //if error occur, wake lock should be released 
-        	wake_lock_destroy(&host->sdio_wlock);
-			goto pio_irq_free;
+        	  wake_lock_destroy(&host->sdio_wlock);
+		  goto pio_irq_free;
 		} else {
                         mmc->pm_caps |= MMC_PM_WAKE_SDIO_IRQ;
 			disable_irq(plat->sdiowakeup_irq);
