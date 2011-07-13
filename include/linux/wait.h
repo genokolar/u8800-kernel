@@ -189,8 +189,6 @@ do {									\
 } while (0)
 
 /**
-<<<<<<< HEAD
-=======
  * wait_io_event_interruptible - sleep until an io condition gets true
  * @wq: the waitqueue to wait on
  * @condition: a C expression for the event to wait for
@@ -280,7 +278,6 @@ do {                                                                   \
 } while (0)
 
 /**
->>>>>>> ebb7c26... msm: kgsl: mark GPU wait time as IO time
  * wait_event - sleep until a condition gets true
  * @wq: the waitqueue to wait on
  * @condition: a C expression for the event to wait for
