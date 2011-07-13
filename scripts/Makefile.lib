@@ -230,8 +230,6 @@ quiet_cmd_lzma = LZMA    $@
 cmd_lzma = (cat $(filter-out FORCE,$^) | \
 	lzma -9 && $(call size_append, $(filter-out FORCE,$^))) > $@ || \
 	(rm -f $@ ; false)
-<<<<<<< HEAD
-=======
 
 quiet_cmd_lzo = LZO     $@
 cmd_lzo = (cat $(filter-out FORCE,$^) | \
@@ -269,4 +267,3 @@ cmd_xzmisc = (cat $(filter-out FORCE,$^) | \
 # misc stuff
 # ---------------------------------------------------------------------------
 quote:="
->>>>>>> b64f792... decompressors: add XZ decompressor module
