@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.32.9
- * Wed Jul 13 23:54:38 2011
+ * Thu Jul 14 06:44:05 2011
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -606,6 +606,7 @@
 #define CONFIG_PROFILING 1
 #define CONFIG_HUAWEI_FEATURE_TPA2028D1_AMPLIFIER 1
 #define CONFIG_IP_NF_MATCH_TTL 1
+#define CONFIG_CPU_FREQ_GOV_BRAZILIANWAX 1
 #define CONFIG_ANDROID_LOW_MEMORY_KILLER 1
 #define CONFIG_USB_CSW_HACK 1
 #define CONFIG_SND_MSM7KV2_DAI_SOC 1
