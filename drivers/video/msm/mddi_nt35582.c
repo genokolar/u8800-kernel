@@ -68,7 +68,9 @@
 #include <linux/gpio.h>
 #include <linux/hardware_self_adapt.h>
 #include "hw_backlight.h"
-#define LCD_DEBUG
+
+//#define LCD_DEBUG
+#undef  LCD_DEBUG
 #ifdef  LCD_DEBUG
 #define MDDI_LCD_DEBUG(fmt, args...) printk(KERN_ERR fmt, ##args)
 #else
@@ -82,7 +84,7 @@ static int nt35582_lcd_on(struct platform_device *pdev)
     /*exit sleep mode*/
     ret = mddi_queue_register_write(0x1100,0,TRUE,0);
     mdelay(10);
-    MDDI_LCD_DEBUG("%s: nt35582_lcd exit sleep mode ,on_ret=%d\n",__func__,ret);
+    //MDDI_LCD_DEBUG("%s: nt35582_lcd exit sleep mode ,on_ret=%d\n",__func__,ret);
        
 	return ret;
 }
@@ -92,7 +94,7 @@ static int nt35582_lcd_off(struct platform_device *pdev)
     /*enter sleep mode*/
     ret = mddi_queue_register_write(0x1000,0,TRUE,0);
     mdelay(10);
-    MDDI_LCD_DEBUG("%s: nt35582_lcd enter sleep mode ,off_ret=%d\n",__func__,ret);
+    //MDDI_LCD_DEBUG("%s: nt35582_lcd enter sleep mode ,off_ret=%d\n",__func__,ret);
 	return ret;
 
 }
@@ -152,13 +154,13 @@ static int __init nt35582_init(void)
 	    	pinfo->clk_min = 192000000;
 	    	pinfo->clk_max = 192000000;
         MDDI_LCD_DEBUG("%s: BYD LCD and Truly LCD,set MDDI_CLK=%d \n",__func__, pinfo->clk_rate);
-		pinfo->lcd.vsync_enable = TRUE;
+		pinfo->lcd.vsync_enable = FALSE;
 /* Reduce the fps,sync depend on the vsync signal*/
         	pinfo->lcd.refx100 = 4000;
 		pinfo->lcd.v_back_porch = 0;
 		pinfo->lcd.v_front_porch = 0;
 		pinfo->lcd.v_pulse_width = 22;
-		pinfo->lcd.hw_vsync_mode = TRUE;
+		pinfo->lcd.hw_vsync_mode = FALSE;
 		pinfo->lcd.vsync_notifier_period = 0;
 		pinfo->bl_max = 255;
 

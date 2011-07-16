@@ -820,7 +820,7 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 	TS_DEBUG_RMI("the power is ok\n");
 	if (ret)
 		goto err_power_on_failed;
-	mdelay(50);
+	mdelay(10);
 
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		printk(KERN_ERR "%s: need I2C_FUNC_I2C\n", __func__);
@@ -1130,7 +1130,7 @@ static int synaptics_rmi4_resume(struct i2c_client *client)
 		printk(KERN_ERR
 		       "synaptics_ts_resume: the touch can't resume! \n");
 	}
-	mdelay(50);
+	mdelay(10);
 	if (ts->use_irq) {
 		enable_irq(client->irq);
 	} else
