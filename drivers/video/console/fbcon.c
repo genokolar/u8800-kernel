@@ -101,11 +101,7 @@ static signed char con2fb_map_boot[MAX_NR_CONSOLES];
 static int logo_lines;
 /* logo_shown is an index to vc_cons when >= 0; otherwise follows FBCON_LOGO
    enums.  */
-#ifdef CONFIG_HUAWEI_KERNEL
-static int logo_shown = FBCON_LOGO_DONTSHOW;
-#else
 static int logo_shown = FBCON_LOGO_CANSHOW;
-#endif
 /* Software scrollback */
 static int fbcon_softback_size = 32768;
 static unsigned long softback_buf, softback_curr;
