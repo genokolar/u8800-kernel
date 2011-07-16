@@ -81,7 +81,7 @@ static int nt35582_lcd_on(struct platform_device *pdev)
     int ret;
     /*exit sleep mode*/
     ret = mddi_queue_register_write(0x1100,0,TRUE,0);
-    mdelay(50);
+    mdelay(10);
     MDDI_LCD_DEBUG("%s: nt35582_lcd exit sleep mode ,on_ret=%d\n",__func__,ret);
        
 	return ret;
@@ -91,7 +91,7 @@ static int nt35582_lcd_off(struct platform_device *pdev)
     int ret;
     /*enter sleep mode*/
     ret = mddi_queue_register_write(0x1000,0,TRUE,0);
-    mdelay(50);
+    mdelay(10);
     MDDI_LCD_DEBUG("%s: nt35582_lcd enter sleep mode ,off_ret=%d\n",__func__,ret);
 	return ret;
 
@@ -148,13 +148,13 @@ static int __init nt35582_init(void)
 /* change 24bit into 16bit */
 		pinfo->bpp = 16;
 		pinfo->fb_num = 2;
-        pinfo->clk_rate = 192000000;
-	    pinfo->clk_min = 192000000;
-	    pinfo->clk_max = 192000000;
+        	pinfo->clk_rate = 192000000;
+	    	pinfo->clk_min = 192000000;
+	    	pinfo->clk_max = 192000000;
         MDDI_LCD_DEBUG("%s: BYD LCD and Truly LCD,set MDDI_CLK=%d \n",__func__, pinfo->clk_rate);
-		pinfo->lcd.vsync_enable = FALSE;
+		pinfo->lcd.vsync_enable = TRUE;
 /* Reduce the fps,sync depend on the vsync signal*/
-        pinfo->lcd.refx100 = 4000;
+        	pinfo->lcd.refx100 = 4000;
 		pinfo->lcd.v_back_porch = 0;
 		pinfo->lcd.v_front_porch = 0;
 		pinfo->lcd.v_pulse_width = 22;
