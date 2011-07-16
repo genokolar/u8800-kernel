@@ -2067,20 +2067,11 @@ static void set_curr_task_fair(struct rq *rq)
 #ifdef CONFIG_FAIR_GROUP_SCHED
 static void moved_group_fair(struct task_struct *p, int on_rq)
 {
-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
-
-	update_curr(cfs_rq);
-<<<<<<< HEAD
-	place_entity(cfs_rq, &p->se, 1);
-=======
-
-	delta = (s64) (p->se.vruntime - cfs_rq->min_vruntime);
-	if(delta > 0)
-		p->se.vruntime = cfs_rq->min_vruntime;
-
 	if (!on_rq)
-		place_entity(cfs_rq, &p->se, 1);
->>>>>>> ec54302... sched: Remove the cfs_rq dependency from set_task_cpu()
+		p->se.vruntime -= cfs_rq_of(&p->se)->min_vruntime;
+	set_task_rq(p, task_cpu(p));
+	if (!on_rq)
+		p->se.vruntime += cfs_rq_of(&p->se)->min_vruntime;
 }
 #endif
 
